@@ -3,12 +3,15 @@ let attempt = document.getElementById('attempt');
 
 function guess() {
     let input = document.getElementById('user-guess');
-    if (!answer.value && !attempt.value) setHiddenFields();
-    (validateInput(input.value)) ? attempt++ : false;
+    if (!answer.value && !attempt.value) { setHiddenFields(); }
+    if (validateInput(input.value)) {
+        attempt++;
+    } else {
+        return false;
+    }
     getResults(input.value);
-    console.log(getResults.value);
-    if (getResults.value === true) setMessage('You Win! :)');
-    if (getResults.value === false && attempt >= 10) setMessage('You Lose! :(');
+    if (getResults(input.value)) setMessage('You Win! :)');
+    if (!getResults && attempt >= 10) setMessage('You Lose! :(');
     setMessage('Incorrect, try again.');
 }
 
@@ -28,7 +31,12 @@ function setMessage(mes) {
 }
 
 function validateInput(inp) {
-    inp.length === 4 ? true : setMessage('Guesses must be exactly 4 characters long.'); return false;
+    if (inp.length === 4) {
+        return true;
+    } else {
+        setMessage('Guesses must be exactly 4 characters long.');
+        return false;
+    } 
 }
 
 function getResults(userGuess) {
@@ -42,19 +50,20 @@ function getResults(userGuess) {
     for (var i = 0; i < userGuess.length; i++) {
         console.log(answer.value[i]);
         console.log(userGuess);
-        if (userGuess[i] === answer.value[i])   {
+        if (userGuess[i] === answer.value[i]) {
             correctCount++;
             glyphArray[i] = i + correct;
             console.log(correctCount);
             continue;
-        } else if (userGuess.indexOf(answer.value[i]) >= 0)    {
-            glyphArray[i] = i + transfer;
-            continue;
         } else if (userGuess.indexOf(answer.value[i]) === -1) {
             glyphArray[i] = i + incorrect;
             continue;
+        } else if (userGuess.indexOf(answer.value[i]) >= 0) {
+            glyphArray[i] = i + transfer;
+            continue;
         }
     }
+
     results.innerHTML += '<div class="row"><span class="col-md-6">' + userGuess + '</span><div class="col-md-6">' + glyphArray.join(' ') + '</div></div>';
 
     return correctCount === 4;
