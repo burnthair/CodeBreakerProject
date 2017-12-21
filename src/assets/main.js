@@ -5,14 +5,22 @@ function guess() {
     let input = document.getElementById('user-guess');
     if (!answer.value && !attempt.value) { setHiddenFields(); }
     if (validateInput(input.value)) {
-        attempt++;
+        attempt.value++;
+        console.log(attempt);
     } else {
         return false;
     }
-    getResults(input.value);
-    if (getResults(input.value)) setMessage('You Win! :)');
-    if (!getResults && attempt >= 10) setMessage('You Lose! :(');
-    setMessage('Incorrect, try again.');
+    if (getResults(input.value)) {
+        setMessage('You Win! :)');
+        showAnswer(true);
+        showReplay();
+    } else if (attempt.value >= 10) {
+        setMessage('You Lose! :(');
+        showAnswer(false);
+        showReplay();
+    } else {
+        setMessage('Incorrect, try again.');
+    }
 }
 
 //implement new functions here
@@ -55,19 +63,30 @@ function getResults(userGuess) {
             glyphArray[i] = i + correct;
             console.log(correctCount);
             continue;
-        } else if (userGuess.indexOf(answer.value[i]) === -1) {
-            glyphArray[i] = i + incorrect;
-            continue;
-        } else if (userGuess.indexOf(answer.value[i]) >= 0) {
+        } else if (answer.value.indexOf(userGuess[i]) >= 0) {
             glyphArray[i] = i + transfer;
+            continue;
+        } else if (answer.value.indexOf(userGuess[i]) === -1) {
+            glyphArray[i] = i + incorrect;
             continue;
         }
     }
 
     results.innerHTML += '<div class="row"><span class="col-md-6">' + userGuess + '</span><div class="col-md-6">' + glyphArray.join(' ') + '</div></div>';
 
-    return correctCount === 4;
+    return userGuess == answer.value;
 }
 
+function showAnswer(res) {
+    code = document.getElementById('code');
+    code.innerHTML = answer.value;
+    if (res) {
+        code.className += ' success';
+    }
+    code.className += ' failure'
+}
 
-// glyphArray.forEach(function (el) { return el; })
+function showReplay() {
+    document.getElementById('guessing-div').style.display = 'none';
+    document.getElementById('replay-div').style.display = 'block';
+}
